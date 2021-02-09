@@ -1,28 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { CSSTransition } from 'react-transition-group';
-import { contactStorage } from "../../redux/actions/contactAction";
+import { itemsSelector } from "../../redux/contactsSelectors";
 import ContactForm from '../contactForm/ContactForm';
 import Filter from '../filter/Filter';
 import ContactList from '../contactList/ContactList';
+import { getContacts } from '../../redux/contactsOperation';
 import styles from './App.module.css';
 import './App.css';
 
 
 class App extends Component {
     componentDidMount() {
-        const persistedContacts = localStorage.getItem('contacts')
-
-        if (persistedContacts) {
-            this.props.contactStorage(JSON.parse(persistedContacts));
-        };
-    };
-
-    componentDidUpdate(prevProps) {
-        const { contacts } = this.props;
-        if (prevProps.contacts !== contacts) {
-            localStorage.setItem('contacts', JSON.stringify(contacts))
-        }
+        this.props.onGetContacts();
     };
     
     render() {
@@ -52,11 +42,11 @@ class App extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  contacts: state.contacts.items,
+  contacts: itemsSelector(state),
 });
 
 const mapDispatchToProps = {
-  contactStorage,
+  onGetContacts: getContacts,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
